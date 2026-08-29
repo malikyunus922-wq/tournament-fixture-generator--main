@@ -1,0 +1,875 @@
+/* ===============================
+   GOOGLE FONT STYLE
+================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+
+/* ===============================
+   BASIC SETTINGS
+================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: "Poppins", sans-serif;
+    background: #f4f6fb;
+    color: #1e293b;
+}
+
+
+/* ===============================
+   SIDEBAR
+================================ */
+
+.sidebar {
+    position: fixed;
+    width: 260px;
+    height: 100vh;
+    background: #101827;
+    color: white;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 35px;
+    border-bottom: 1px solid #273244;
+}
+
+.logo-icon {
+    font-size: 35px;
+}
+
+.logo h2 {
+    font-size: 20px;
+}
+
+.logo span {
+    color: #38bdf8;
+}
+
+.logo p {
+    font-size: 9px;
+    color: #94a3b8;
+    letter-spacing: 1px;
+}
+
+
+/* ===============================
+   MENU
+================================ */
+
+.menu {
+    margin-top: 30px;
+}
+
+.menu a {
+    display: block;
+    text-decoration: none;
+    color: #cbd5e1;
+    padding: 13px;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    transition: 0.3s;
+}
+
+.menu a span {
+    margin-right: 10px;
+}
+
+.menu a:hover,
+.menu a.active {
+    background: #1e40af;
+    color: white;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 15px;
+    background: #182235;
+    border-radius: 12px;
+}
+
+.sidebar-bottom p {
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.sidebar-bottom strong {
+    font-size: 11px;
+}
+
+
+/* ===============================
+   MAIN CONTENT
+================================ */
+
+.main-content {
+    margin-left: 260px;
+    padding: 35px;
+}
+
+
+/* ===============================
+   TOP HEADER
+================================ */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.small-title,
+.section-label {
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+.topbar h1 {
+    font-size: 32px;
+    margin-top: 5px;
+}
+
+.topbar h1 span {
+    color: #2563eb;
+}
+
+.status-box {
+    background: white;
+    padding: 12px 18px;
+    border-radius: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+}
+
+.status-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background: #22c55e;
+    border-radius: 50%;
+    margin-right: 7px;
+}
+
+
+/* ===============================
+   SECTION
+================================ */
+
+.section {
+    margin-bottom: 70px;
+}
+
+.section-heading,
+.standings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.section-heading h2,
+.standings-header h2 {
+    font-size: 27px;
+    margin: 5px 0;
+}
+
+.section-heading p,
+.standings-header p {
+    color: #64748b;
+    font-size: 14px;
+}
+
+
+/* ===============================
+   HERO
+================================ */
+
+.hero-card {
+    min-height: 380px;
+    border-radius: 25px;
+    padding: 55px;
+    background: linear-gradient(135deg, #111827, #1d4ed8);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+}
+
+.hero-content {
+    width: 55%;
+}
+
+.tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+.hero-content h2 {
+    font-size: 50px;
+    margin: 20px 0;
+    line-height: 1.1;
+}
+
+.hero-content h2 span {
+    color: #7dd3fc;
+}
+
+.hero-content p {
+    color: #dbeafe;
+    line-height: 1.8;
+    max-width: 550px;
+}
+
+.primary-btn,
+.generate-btn {
+    border: none;
+    cursor: pointer;
+    margin-top: 25px;
+    padding: 14px 22px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.primary-btn {
+    background: white;
+    color: #1e40af;
+}
+
+.primary-btn:hover {
+    transform: translateY(-3px);
+}
+
+.primary-btn span {
+    margin-left: 10px;
+}
+
+
+/* HERO VISUAL */
+
+.hero-visual {
+    position: relative;
+    width: 35%;
+    height: 250px;
+}
+
+.trophy-circle {
+    width: 150px;
+    height: 150px;
+    background: rgba(255,255,255,0.15);
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 70px;
+    position: absolute;
+    top: 45px;
+    left: 70px;
+}
+
+.floating-card {
+    position: absolute;
+    background: white;
+    color: #1e293b;
+    padding: 12px 18px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    font-size: 13px;
+}
+
+.floating-card span {
+    margin-left: 7px;
+}
+
+.card-one {
+    top: 10px;
+    left: 0;
+}
+
+.card-two {
+    bottom: 10px;
+    right: 0;
+}
+
+
+/* ===============================
+   STATISTICS
+================================ */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    background: #eff6ff;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 23px;
+}
+
+.stat-card p {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.stat-card h2 {
+    font-size: 25px;
+}
+
+
+/* ===============================
+   TEAM SECTION
+================================ */
+
+.team-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+}
+
+.add-team-card,
+.team-list-card {
+    background: white;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+
+.card-header,
+.list-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.header-icon {
+    width: 48px;
+    height: 48px;
+    background: #2563eb;
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.card-header p,
+.list-header p {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.team-input {
+    display: flex;
+    gap: 10px;
+}
+
+.team-input input {
+    flex: 1;
+    padding: 13px;
+    border: 1px solid #dbe1ea;
+    border-radius: 9px;
+    outline: none;
+}
+
+.team-input input:focus {
+    border-color: #2563eb;
+}
+
+.team-input button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 13px 18px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.message-box {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #2563eb;
+}
+
+.quick-info {
+    margin-top: 25px;
+    display: flex;
+    gap: 20px;
+    font-size: 12px;
+    color: #64748b;
+}
+
+.quick-info strong {
+    color: #22c55e;
+}
+
+.list-header {
+    justify-content: space-between;
+}
+
+.number-badge {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 7px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.team-list {
+    max-height: 260px;
+    overflow-y: auto;
+}
+
+.empty-state,
+.empty-fixture {
+    text-align: center;
+    padding: 40px;
+    color: #94a3b8;
+}
+
+.empty-state div,
+.empty-fixture div {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+
+/* ===============================
+   GENERATE SECTION
+================================ */
+
+.generate-card {
+    background: #101827;
+    color: white;
+    border-radius: 20px;
+    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.generate-left {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.generate-left p {
+    color: #cbd5e1;
+    margin-top: 8px;
+    max-width: 600px;
+}
+
+.generate-icon {
+    width: 65px;
+    height: 65px;
+    border-radius: 15px;
+    background: #1d4ed8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+}
+
+.generate-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.generate-btn {
+    background: #38bdf8;
+    color: #082f49;
+    margin: 0;
+}
+
+.generate-btn:hover {
+    transform: translateY(-2px);
+}
+
+.reset-btn {
+    background: transparent;
+    color: white;
+    border: 1px solid #64748b;
+    padding: 12px 18px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.smart-analysis {
+    margin-top: 18px;
+    background: #ecfeff;
+    border-left: 4px solid #06b6d4;
+    padding: 18px;
+    border-radius: 12px;
+    display: flex;
+    gap: 15px;
+}
+
+.smart-icon {
+    font-size: 28px;
+}
+
+.analysis-title {
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+
+/* ===============================
+   FIXTURES
+================================ */
+
+.fixture-grid,
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.fixture-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+
+.fixture-number {
+    font-size: 11px;
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.match-teams {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.match-team {
+    font-weight: 600;
+    width: 40%;
+    text-align: center;
+}
+
+.vs {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 5px 8px;
+    border-radius: 7px;
+    font-size: 11px;
+}
+
+.match-date {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.legend {
+    display: flex;
+    gap: 15px;
+    font-size: 12px;
+}
+
+.green-dot,
+.orange-dot {
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    border-radius: 50%;
+}
+
+.green-dot {
+    background: #22c55e;
+}
+
+.orange-dot {
+    background: #f59e0b;
+}
+
+
+/* ===============================
+   CALENDAR
+================================ */
+
+.calendar-container {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+
+.calendar-side {
+    background: #1e40af;
+    color: white;
+    padding: 40px;
+}
+
+.calendar-big-icon {
+    font-size: 45px;
+    margin-bottom: 20px;
+}
+
+.calendar-side p {
+    margin-top: 12px;
+    color: #dbeafe;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.schedule-rule {
+    margin-top: 25px;
+    background: rgba(255,255,255,0.15);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 11px;
+}
+
+.calendar-list {
+    padding: 20px;
+}
+
+
+/* ===============================
+   RESULTS
+================================ */
+
+.result-card {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+
+.result-card select {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px solid #dbe1ea;
+    border-radius: 8px;
+}
+
+.result-card button {
+    margin-top: 10px;
+    width: 100%;
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+
+/* ===============================
+   STANDINGS
+================================ */
+
+.refresh-btn {
+    border: none;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 12px 16px;
+    border-radius: 9px;
+    cursor: pointer;
+}
+
+.standings-card {
+    background: white;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    background: #f8fafc;
+    color: #64748b;
+    padding: 15px;
+    font-size: 12px;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 13px;
+}
+
+.table-empty td {
+    text-align: center;
+    color: #94a3b8;
+    padding: 30px;
+}
+
+
+/* ===============================
+   FOOTER
+================================ */
+
+footer {
+    border-top: 1px solid #e2e8f0;
+    padding: 25px 0;
+    display: flex;
+    justify-content: space-between;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+
+/* ===============================
+   MOBILE RESPONSIVE
+================================ */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
+
+    .menu {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .menu a {
+        width: auto;
+    }
+
+    .sidebar-bottom {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
+
+    .hero-card {
+        flex-direction: column;
+        padding: 35px;
+    }
+
+    .hero-content,
+    .hero-visual {
+        width: 100%;
+    }
+
+    .hero-content h2 {
+        font-size: 38px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .team-layout,
+    .calendar-container {
+        grid-template-columns: 1fr;
+    }
+
+    .generate-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 25px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .topbar,
+    .section-heading,
+    .standings-header,
+    footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .stats-grid,
+    .fixture-grid,
+    .result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .team-input {
+        flex-direction: column;
+    }
+
+    .quick-info {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .generate-left {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-content h2 {
+        font-size: 32px;
+    }
+
+    .hero-visual {
+        display: none;
+    }
+
+}

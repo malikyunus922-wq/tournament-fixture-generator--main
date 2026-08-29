@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Tournament Fixture Generator</title>
+
+    <!-- CSS File -->
+    <link rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">🏆</div>
+
+            <div>
+                <h2>FIXTURE<span>PRO</span></h2>
+                <p>SMART SPORTS SYSTEM</p>
+            </div>
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="#dashboard" class="active">
+                <span>◉</span>
+                Dashboard
+            </a>
+
+            <a href="#teams">
+                <span>👥</span>
+                Team Manager
+            </a>
+
+            <a href="#fixtures">
+                <span>⚔</span>
+                Fixtures
+            </a>
+
+            <a href="#calendar">
+                <span>📅</span>
+                Match Calendar
+            </a>
+
+            <a href="#standings">
+                <span>🏆</span>
+                Standings
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <p>PYTHON PROJECT</p>
+            <strong>Tournament Fixture Generator</strong>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOP HEADER -->
+
+        <header class="topbar">
+
+            <div>
+
+                <p class="small-title">
+                    SPORTS MANAGEMENT PLATFORM
+                </p>
+
+                <h1>
+                    Tournament <span>Control Center</span>
+                </h1>
+
+            </div>
+
+
+            <div class="status-box">
+
+                <span class="status-dot"></span>
+
+                System Ready
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================
+             DASHBOARD
+        ========================== -->
+
+        <section id="dashboard" class="section">
+
+
+            <!-- HERO CARD -->
+
+            <div class="hero-card">
+
+                <div class="hero-content">
+
+                    <div class="tag">
+                        ⚡ DECISION SUPPORT SYSTEM
+                    </div>
+
+                    <h2>
+                        Build Smarter
+                        <span>Tournaments.</span>
+                    </h2>
+
+                    <p>
+                        Add teams, generate fixtures automatically,
+                        allocate BYEs, create conflict-free schedules
+                        and track live tournament standings.
+                    </p>
+
+
+                    <button class="primary-btn"
+                        onclick="document.getElementById('teams').scrollIntoView()">
+
+                        Start Tournament
+                        <span>→</span>
+
+                    </button>
+
+                </div>
+
+
+                <div class="hero-visual">
+
+                    <div class="trophy-circle">
+                        🏆
+                    </div>
+
+                    <div class="floating-card card-one">
+                        ⚔
+                        <span>Fixtures</span>
+                    </div>
+
+                    <div class="floating-card card-two">
+                        📅
+                        <span>Schedule</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- STATISTICS -->
+
+            <div class="stats-grid">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">👥</div>
+
+                    <div>
+                        <p>Total Teams</p>
+                        <h2 id="teamCount">0</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">⚔</div>
+
+                    <div>
+                        <p>Total Matches</p>
+                        <h2 id="matchCount">0</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">📅</div>
+
+                    <div>
+                        <p>Schedule Days</p>
+                        <h2 id="dayCount">0</h2>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon">🏆</div>
+
+                    <div>
+                        <p>Results Updated</p>
+                        <h2 id="resultCount">0</h2>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             TEAM MANAGER
+        ========================== -->
+
+        <section id="teams" class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        STEP 01
+                    </p>
+
+                    <h2>
+                        Team Manager
+                    </h2>
+
+                    <p>
+                        Add teams to start building your tournament.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="team-layout">
+
+
+                <!-- ADD TEAM CARD -->
+
+                <div class="add-team-card">
+
+                    <div class="card-header">
+
+                        <div class="header-icon">
+                            ＋
+                        </div>
+
+                        <div>
+                            <h3>Add a New Team</h3>
+
+                            <p>
+                                Enter one team at a time
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="team-input">
+
+                        <input
+                            type="text"
+                            id="teamName"
+                            placeholder="Example: Mumbai Warriors">
+
+                        <button
+                            onclick="addTeam()">
+
+                            Add Team
+
+                        </button>
+
+                    </div>
+
+
+                    <p id="message"
+                        class="message-box">
+                    </p>
+
+
+                    <div class="quick-info">
+
+                        <div>
+                            <strong>✓</strong>
+                            No duplicate teams
+                        </div>
+
+                        <div>
+                            <strong>✓</strong>
+                            Empty names blocked
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TEAM LIST CARD -->
+
+                <div class="team-list-card">
+
+                    <div class="list-header">
+
+                        <div>
+                            <h3>Registered Teams</h3>
+
+                            <p>
+                                Teams ready for tournament
+                            </p>
+                        </div>
+
+                        <div class="number-badge"
+                            id="teamBadge">
+
+                            0 Teams
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="teamList"
+                        class="team-list">
+
+                        <div class="empty-state">
+
+                            <div>👥</div>
+
+                            <p>
+                                No teams added yet
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             GENERATE FIXTURE
+        ========================== -->
+
+        <section class="section generate-section">
+
+            <div class="generate-card">
+
+                <div class="generate-left">
+
+                    <div class="generate-icon">
+                        ⚙
+                    </div>
+
+
+                    <div>
+
+                        <p class="section-label">
+                            STEP 02
+                        </p>
+
+                        <h2>
+                            Generate Smart Fixtures
+                        </h2>
+
+                        <p>
+                            Our Python decision-support system
+                            analyzes your teams and automatically
+                            creates tournament fixtures.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="generate-actions">
+
+                    <button class="generate-btn"
+                        onclick="generateFixture()">
+
+                        ⚡ Generate Fixture
+
+                    </button>
+
+
+                    <button class="reset-btn"
+                        onclick="resetTournament()">
+
+                        ↻ Reset
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SMART ANALYSIS -->
+
+            <div id="smartMessage"
+                class="smart-analysis">
+
+                <div class="smart-icon">
+                    🤖
+                </div>
+
+                <div>
+
+                    <p class="analysis-title">
+                        Smart Schedule Analysis
+                    </p>
+
+                    <p id="byeMessage">
+                        Add teams and generate fixtures to
+                        receive smart recommendations.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             FIXTURES
+        ========================== -->
+
+        <section id="fixtures" class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        STEP 03
+                    </p>
+
+                    <h2>
+                        Tournament Fixtures
+                    </h2>
+
+                    <p>
+                        Automatically generated matches and schedule.
+                    </p>
+
+                </div>
+
+
+                <div class="legend">
+
+                    <span class="legend-item">
+                        <i class="green-dot"></i>
+                        Completed
+                    </span>
+
+                    <span class="legend-item">
+                        <i class="orange-dot"></i>
+                        Pending
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <div id="fixtureList"
+                class="fixture-grid">
+
+                <div class="empty-fixture">
+
+                    <div>⚔</div>
+
+                    <h3>No Fixtures Generated</h3>
+
+                    <p>
+                        Add teams and click Generate Fixture.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             MATCH CALENDAR
+        ========================== -->
+
+        <section id="calendar" class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        STEP 04
+                    </p>
+
+                    <h2>
+                        Match Calendar
+                    </h2>
+
+                    <p>
+                        A clear date-wise view of all matches.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="calendar-container">
+
+                <div class="calendar-side">
+
+                    <div class="calendar-big-icon">
+                        📅
+                    </div>
+
+                    <h3>
+                        Tournament Schedule
+                    </h3>
+
+                    <p>
+                        Matches are automatically assigned dates
+                        to help create a conflict-free schedule.
+                    </p>
+
+                    <div class="schedule-rule">
+
+                        ✓ One scheduled match per date
+
+                    </div>
+
+                </div>
+
+
+                <div id="calendarList"
+                    class="calendar-list">
+
+                    <div class="empty-state">
+
+                        <div>🗓️</div>
+
+                        <p>
+                            Your match calendar will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             RESULTS
+        ========================== -->
+
+        <section id="results" class="section">
+
+            <div class="section-heading">
+
+                <div>
+
+                    <p class="section-label">
+                        STEP 05
+                    </p>
+
+                    <h2>
+                        Update Match Results
+                    </h2>
+
+                    <p>
+                        Select the winner and update standings.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div id="resultList"
+                class="result-grid">
+
+                <div class="empty-fixture">
+
+                    <div>🏅</div>
+
+                    <h3>No Matches Available</h3>
+
+                    <p>
+                        Generate fixtures first.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =========================
+             STANDINGS
+        ========================== -->
+
+        <section id="standings" class="section">
+
+            <div class="standings-header">
+
+                <div>
+
+                    <p class="section-label">
+                        LIVE LEADERBOARD
+                    </p>
+
+                    <h2>
+                        Tournament Standings
+                    </h2>
+
+                    <p>
+                        Automatically updated after every match result.
+                    </p>
+
+                </div>
+
+
+                <button class="refresh-btn"
+                    onclick="loadStandings()">
+
+                    ↻ Refresh Table
+
+                </button>
+
+            </div>
+
+
+
+            <div class="standings-card">
+
+                <div class="table-responsive">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Rank</th>
+
+                                <th>Team</th>
+
+                                <th>Played</th>
+
+                                <th>Won</th>
+
+                                <th>Lost</th>
+
+                                <th>Points</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="standingsTable">
+
+                            <tr class="table-empty">
+
+                                <td colspan="6">
+                                    No standings available yet.
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- FOOTER -->
+
+        <footer>
+
+            <p>
+                © 2026 Tournament Fixture Generator
+            </p>
+
+            <p>
+                Python Flask • Decision Support System • Sports
+            </p>
+
+        </footer>
+
+
+    </main>
+
+
+
+    <!-- JAVASCRIPT FILE -->
+
+    <script
+        src="{{ url_for('static', filename='script.js') }}">
+    </script>
+
+</body>
+
+</html>
