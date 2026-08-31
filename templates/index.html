@@ -1,758 +1,1222 @@
-<!DOCTYPE html>
-<html lang="en">
+// ===============================
+// GET HTML ELEMENTS
+// ===============================
 
-<head>
-    <meta charset="UTF-8">
+const teamName = document.getElementById("teamName");
+const teamList = document.getElementById("teamList");
+const teamBadge = document.getElementById("teamBadge");
+const message = document.getElementById("message");
 
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+const fixtureList = document.getElementById("fixtureList");
+const calendarList = document.getElementById("calendarList");
+const resultList = document.getElementById("resultList");
+const standingsTable = document.getElementById("standingsTable");
 
-    <title>Tournament Fixture Generator</title>
+const byeMessage = document.getElementById("byeMessage");
 
-    <!-- CSS File -->
-    <link rel="stylesheet"
-        href="{{ url_for('static', filename='style.css') }}">
+const teamCount = document.getElementById("teamCount");
+const matchCount = document.getElementById("matchCount");
+const dayCount = document.getElementById("dayCount");
+const resultCount = document.getElementById("resultCount");
 
-</head>
+
+// ===============================
+// ADD TEAM
+// ===============================
+
+function addTeam() {
+
+    const team = teamName.value.trim();
+
+    if (team === "") {
+
+        message.innerText = "Please enter a team name.";
+        return;
+    }
+
+    fetch("/add_team", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            team: team
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        message.innerText = data.message;
+
+        showTeams(data.teams);
+
+        teamName.value = "";
+
+        teamName.focus();
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        message.innerText = "Error adding team.";
+
+    });
+}
 
 
-<body>
+// ===============================
+// ENTER KEY TO ADD TEAM
+// ===============================
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
+teamName.addEventListener("keydown", function(event) {
 
-    <aside class="sidebar">
+    if (event.key === "Enter") {
 
-        <div class="logo">
-            <div class="logo-icon">🏆</div>
+        event.preventDefault();
 
-            <div>
-                <h2>FIXTURE<span>PRO</span></h2>
-                <p>SMART SPORTS SYSTEM</p>
+        addTeam();
+
+    }
+
+});
+
+
+// ===============================
+// SHOW TEAMS
+// ===============================
+
+function showTeams(teams) {
+
+    // Dashboard team count
+    teamCount.innerText = teams.length;
+
+    // Registered team badge
+    teamBadge.innerText = teams.length + " Teams";
+
+
+    if (teams.length === 0) {
+
+        teamList.innerHTML = `
+
+            <div class="empty-state">
+
+                <div>👥</div>
+
+                <p>No teams added yet</p>
+
             </div>
-        </div>
+
+        `;
+
+        return;
+    }
 
 
-        <nav class="menu">
-
-            <a href="#dashboard" class="active">
-                <span>◉</span>
-                Dashboard
-            </a>
-
-            <a href="#teams">
-                <span>👥</span>
-                Team Manager
-            </a>
-
-            <a href="#fixtures">
-                <span>⚔</span>
-                Fixtures
-            </a>
-
-            <a href="#calendar">
-                <span>📅</span>
-                Match Calendar
-            </a>
-
-            <a href="#standings">
-                <span>🏆</span>
-                Standings
-            </a>
-
-        </nav>
+    teamList.innerHTML = "";
 
 
-        <div class="sidebar-bottom">
+    teams.forEach(function(team, index) {
 
-            <p>PYTHON PROJECT</p>
-            <strong>Tournament Fixture Generator</strong>
+        teamList.innerHTML += `
 
-        </div>
+            <div class="team-item">
 
-    </aside>
+                <strong>
+                    ${index + 1}. 🏆 ${team}
+                </strong>
+
+            </div>
+
+        `;
+
+    });
+
+}
 
 
+// ===============================
+// LOAD TEAMS
+// ===============================
 
-    <!-- =========================
-         MAIN CONTENT
-    ========================== -->
+function loadTeams() {
 
-    <main class="main-content">
+    fetch("/teams")
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        showTeams(data);
+
+    })
+
+    .catch(error => {
+
+        console.error("Error loading teams:", error);
+
+    });
+
+}
 
 
-        <!-- TOP HEADER -->
+// ===============================
+// GENERATE FIXTURE
+// ===============================
 
-        <header class="topbar">
+function generateFixture() {
 
-            <div>
+    fetch("/generate_fixture", {
 
-                <p class="small-title">
-                    SPORTS MANAGEMENT PLATFORM
+        method: "POST"
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        // Show BYE / recommendation message
+        byeMessage.innerText =
+            data.bye_message || data.message;
+
+
+        // If no fixtures
+        if (!data.matches || data.matches.length === 0) {
+
+            if (!data.bye_matches ||
+                data.bye_matches.length === 0) {
+
+                alert(data.message);
+
+                return;
+            }
+
+        }
+
+
+        // Show fixtures
+        showFixtures(
+            data.matches,
+            data.bye_matches || []
+        );
+
+
+        // Show calendar
+        showCalendar(
+            data.matches,
+            data.bye_matches || []
+        );
+
+
+        // Show result cards
+        showResults(data.matches);
+
+
+        // Update match count
+        matchCount.innerText =
+            data.matches.length;
+
+
+        // Calculate schedule days
+        const dates = [];
+
+
+        data.matches.forEach(function(match) {
+
+            if (!dates.includes(match.date)) {
+
+                dates.push(match.date);
+
+            }
+
+        });
+
+
+        (data.bye_matches || []).forEach(function(bye) {
+
+            if (!dates.includes(bye.date)) {
+
+                dates.push(bye.date);
+
+            }
+
+        });
+
+
+        dayCount.innerText =
+            dates.length;
+
+
+        // Reset result count
+        resultCount.innerText = 0;
+
+
+        // Update standings
+        loadStandings();
+
+    })
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert("Error generating fixtures.");
+
+    });
+
+}
+
+
+// ===============================
+// SHOW FIXTURES
+// ===============================
+
+function showFixtures(matches, byeMatches) {
+
+    if (!matches || matches.length === 0) {
+
+        fixtureList.innerHTML = `
+
+            <div class="empty-fixture">
+
+                <div>⚔</div>
+
+                <h3>No Fixtures Generated</h3>
+
+                <p>
+                    Add teams and click Generate Fixture.
                 </p>
 
-                <h1>
-                    Tournament <span>Control Center</span>
-                </h1>
+            </div>
+
+        `;
+
+        return;
+    }
+
+
+    fixtureList.innerHTML = "";
+
+
+    // ===============================
+    // NORMAL MATCHES
+    // ===============================
+
+    matches.forEach(function(match) {
+
+        let status = "🟠 Pending";
+
+
+        if (match.winner !== "") {
+
+            status = "🟢 Completed";
+
+        }
+
+
+        fixtureList.innerHTML += `
+
+            <div class="fixture-card">
+
+                <h3>
+
+                    ⚔ Match ${match.number}
+
+                    — Round ${match.round}
+
+                </h3>
+
+
+                <p>
+
+                    <strong>
+                        ${match.team1}
+                    </strong>
+
+                    vs
+
+                    <strong>
+                        ${match.team2}
+                    </strong>
+
+                </p>
+
+
+                <p>
+
+                    📅 ${match.date}
+
+                </p>
+
+
+                <p>
+
+                    ${status}
+
+                </p>
 
             </div>
 
+        `;
 
-            <div class="status-box">
+    });
 
-                <span class="status-dot"></span>
 
-                System Ready
+    // ===============================
+    // BYE CARDS
+    // ===============================
+
+    byeMatches.forEach(function(bye) {
+
+        fixtureList.innerHTML += `
+
+            <div class="fixture-card">
+
+                <h3>
+
+                    🏖️ BYE — Round ${bye.round}
+
+                </h3>
+
+
+                <p>
+
+                    <strong>
+                        ${bye.team}
+                    </strong>
+
+                    gets a BYE
+
+                </p>
+
+
+                <p>
+
+                    📅 ${bye.date}
+
+                </p>
+
+
+                <p>
+
+                    No match for this team in this round.
+
+                </p>
 
             </div>
 
-        </header>
+        `;
+
+    });
+
+}
 
 
+// ===============================
+// SHOW CALENDAR
+// ===============================
 
-        <!-- =========================
-             DASHBOARD
-        ========================== -->
+function showCalendar(matches, byeMatches) {
 
-        <section id="dashboard" class="section">
+    calendarList.innerHTML = "";
+
+    const allDates = {};
 
 
-            <!-- HERO CARD -->
+    // ===============================
+    // ADD NORMAL MATCHES
+    // ===============================
 
-            <div class="hero-card">
+    matches.forEach(function(match) {
 
-                <div class="hero-content">
+        if (!allDates[match.date]) {
 
-                    <div class="tag">
-                        ⚡ DECISION SUPPORT SYSTEM
-                    </div>
+            allDates[match.date] = [];
 
-                    <h2>
-                        Build Smarter
-                        <span>Tournaments.</span>
-                    </h2>
+        }
+
+
+        allDates[match.date].push({
+
+            type: "match",
+
+            number: match.number,
+
+            team1: match.team1,
+
+            team2: match.team2
+
+        });
+
+    });
+
+
+    // ===============================
+    // ADD BYE
+    // ===============================
+
+    byeMatches.forEach(function(bye) {
+
+        if (!allDates[bye.date]) {
+
+            allDates[bye.date] = [];
+
+        }
+
+
+        allDates[bye.date].push({
+
+            type: "bye",
+
+            team: bye.team,
+
+            round: bye.round
+
+        });
+
+    });
+
+
+    // ===============================
+    // EMPTY CALENDAR
+    // ===============================
+
+    if (Object.keys(allDates).length === 0) {
+
+        calendarList.innerHTML = `
+
+            <div class="empty-state">
+
+                <div>🗓️</div>
+
+                <p>
+                    Your match calendar will appear here.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    // ===============================
+    // SHOW DATE-WISE SCHEDULE
+    // ===============================
+
+    Object.keys(allDates).forEach(function(date) {
+
+        let html = `
+
+            <div class="calendar-item">
+
+                <h3>
+                    📅 ${date}
+                </h3>
+
+        `;
+
+
+        allDates[date].forEach(function(item) {
+
+
+            // NORMAL MATCH
+
+            if (item.type === "match") {
+
+                html += `
 
                     <p>
-                        Add teams, generate fixtures automatically,
-                        allocate BYEs, create conflict-free schedules
-                        and track live tournament standings.
+
+                        ⚔ Match ${item.number}:
+
+                        <strong>
+                            ${item.team1}
+                        </strong>
+
+                        vs
+
+                        <strong>
+                            ${item.team2}
+                        </strong>
+
                     </p>
 
+                `;
 
-                    <button class="primary-btn"
-                        onclick="document.getElementById('teams').scrollIntoView()">
-
-                        Start Tournament
-                        <span>→</span>
-
-                    </button>
-
-                </div>
+            }
 
 
-                <div class="hero-visual">
+            // BYE
 
-                    <div class="trophy-circle">
-                        🏆
-                    </div>
+            if (item.type === "bye") {
 
-                    <div class="floating-card card-one">
-                        ⚔
-                        <span>Fixtures</span>
-                    </div>
-
-                    <div class="floating-card card-two">
-                        📅
-                        <span>Schedule</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- STATISTICS -->
-
-            <div class="stats-grid">
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">👥</div>
-
-                    <div>
-                        <p>Total Teams</p>
-                        <h2 id="teamCount">0</h2>
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">⚔</div>
-
-                    <div>
-                        <p>Total Matches</p>
-                        <h2 id="matchCount">0</h2>
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">📅</div>
-
-                    <div>
-                        <p>Schedule Days</p>
-                        <h2 id="dayCount">0</h2>
-                    </div>
-
-                </div>
-
-
-                <div class="stat-card">
-
-                    <div class="stat-icon">🏆</div>
-
-                    <div>
-                        <p>Results Updated</p>
-                        <h2 id="resultCount">0</h2>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             TEAM MANAGER
-        ========================== -->
-
-        <section id="teams" class="section">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <p class="section-label">
-                        STEP 01
-                    </p>
-
-                    <h2>
-                        Team Manager
-                    </h2>
+                html += `
 
                     <p>
-                        Add teams to start building your tournament.
+
+                        🏖️
+
+                        <strong>
+                            ${item.team}
+                        </strong>
+
+                        gets a BYE
+
+                        (Round ${item.round})
+
                     </p>
 
-                </div>
+                `;
+
+            }
+
+        });
+
+
+        html += `</div>`;
+
+
+        calendarList.innerHTML += html;
+
+    });
+
+}
+
+
+// ===============================
+// SHOW RESULTS
+// ===============================
+
+function showResults(matches) {
+
+    if (!matches || matches.length === 0) {
+
+        resultList.innerHTML = `
+
+            <div class="empty-fixture">
+
+                <div>🏅</div>
+
+                <h3>No Matches Available</h3>
+
+                <p>
+                    Generate fixtures first.
+                </p>
 
             </div>
 
+        `;
 
+        return;
 
-            <div class="team-layout">
+    }
 
 
-                <!-- ADD TEAM CARD -->
+    resultList.innerHTML = "";
 
-                <div class="add-team-card">
 
-                    <div class="card-header">
+    matches.forEach(function(match) {
 
-                        <div class="header-icon">
-                            ＋
-                        </div>
 
-                        <div>
-                            <h3>Add a New Team</h3>
+        // ===============================
+        // RESULT ALREADY SAVED
+        // ===============================
 
-                            <p>
-                                Enter one team at a time
-                            </p>
-                        </div>
+        if (match.winner !== "") {
 
-                    </div>
+            resultList.innerHTML += `
 
-
-                    <div class="team-input">
-
-                        <input
-                            type="text"
-                            id="teamName"
-                            placeholder="Example: Mumbai Warriors">
-
-                        <button
-                            onclick="addTeam()">
-
-                            Add Team
-
-                        </button>
-
-                    </div>
-
-
-                    <p id="message"
-                        class="message-box">
-                    </p>
-
-
-                    <div class="quick-info">
-
-                        <div>
-                            <strong>✓</strong>
-                            No duplicate teams
-                        </div>
-
-                        <div>
-                            <strong>✓</strong>
-                            Empty names blocked
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- TEAM LIST CARD -->
-
-                <div class="team-list-card">
-
-                    <div class="list-header">
-
-                        <div>
-                            <h3>Registered Teams</h3>
-
-                            <p>
-                                Teams ready for tournament
-                            </p>
-                        </div>
-
-                        <div class="number-badge"
-                            id="teamBadge">
-
-                            0 Teams
-
-                        </div>
-
-                    </div>
-
-
-                    <div id="teamList"
-                        class="team-list">
-
-                        <div class="empty-state">
-
-                            <div>👥</div>
-
-                            <p>
-                                No teams added yet
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             GENERATE FIXTURE
-        ========================== -->
-
-        <section class="section generate-section">
-
-            <div class="generate-card">
-
-                <div class="generate-left">
-
-                    <div class="generate-icon">
-                        ⚙
-                    </div>
-
-
-                    <div>
-
-                        <p class="section-label">
-                            STEP 02
-                        </p>
-
-                        <h2>
-                            Generate Smart Fixtures
-                        </h2>
-
-                        <p>
-                            Our Python decision-support system
-                            analyzes your teams and automatically
-                            creates tournament fixtures.
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="generate-actions">
-
-                    <button class="generate-btn"
-                        onclick="generateFixture()">
-
-                        ⚡ Generate Fixture
-
-                    </button>
-
-
-                    <button class="reset-btn"
-                        onclick="resetTournament()">
-
-                        ↻ Reset
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- SMART ANALYSIS -->
-
-            <div id="smartMessage"
-                class="smart-analysis">
-
-                <div class="smart-icon">
-                    🤖
-                </div>
-
-                <div>
-
-                    <p class="analysis-title">
-                        Smart Schedule Analysis
-                    </p>
-
-                    <p id="byeMessage">
-                        Add teams and generate fixtures to
-                        receive smart recommendations.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             FIXTURES
-        ========================== -->
-
-        <section id="fixtures" class="section">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <p class="section-label">
-                        STEP 03
-                    </p>
-
-                    <h2>
-                        Tournament Fixtures
-                    </h2>
-
-                    <p>
-                        Automatically generated matches and schedule.
-                    </p>
-
-                </div>
-
-
-                <div class="legend">
-
-                    <span class="legend-item">
-                        <i class="green-dot"></i>
-                        Completed
-                    </span>
-
-                    <span class="legend-item">
-                        <i class="orange-dot"></i>
-                        Pending
-                    </span>
-
-                </div>
-
-            </div>
-
-
-
-            <div id="fixtureList"
-                class="fixture-grid">
-
-                <div class="empty-fixture">
-
-                    <div>⚔</div>
-
-                    <h3>No Fixtures Generated</h3>
-
-                    <p>
-                        Add teams and click Generate Fixture.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             MATCH CALENDAR
-        ========================== -->
-
-        <section id="calendar" class="section">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <p class="section-label">
-                        STEP 04
-                    </p>
-
-                    <h2>
-                        Match Calendar
-                    </h2>
-
-                    <p>
-                        A clear date-wise view of all matches.
-                    </p>
-
-                </div>
-
-            </div>
-
-
-
-            <div class="calendar-container">
-
-                <div class="calendar-side">
-
-                    <div class="calendar-big-icon">
-                        📅
-                    </div>
+                <div class="result-card">
 
                     <h3>
-                        Tournament Schedule
+                        Match ${match.number}
                     </h3>
 
-                    <p>
-                        Matches are automatically assigned dates
-                        to help create a conflict-free schedule.
-                    </p>
-
-                    <div class="schedule-rule">
-
-                        ✓ One scheduled match per date
-
-                    </div>
-
-                </div>
-
-
-                <div id="calendarList"
-                    class="calendar-list">
-
-                    <div class="empty-state">
-
-                        <div>🗓️</div>
-
-                        <p>
-                            Your match calendar will appear here.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             RESULTS
-        ========================== -->
-
-        <section id="results" class="section">
-
-            <div class="section-heading">
-
-                <div>
-
-                    <p class="section-label">
-                        STEP 05
-                    </p>
-
-                    <h2>
-                        Update Match Results
-                    </h2>
 
                     <p>
-                        Select the winner and update standings.
+
+                        ${match.team1}
+
+                        vs
+
+                        ${match.team2}
+
                     </p>
 
-                </div>
-
-            </div>
-
-
-            <div id="resultList"
-                class="result-grid">
-
-                <div class="empty-fixture">
-
-                    <div>🏅</div>
-
-                    <h3>No Matches Available</h3>
 
                     <p>
-                        Generate fixtures first.
+
+                        🏆 Winner:
+
+                        <strong>
+                            ${match.winner}
+                        </strong>
+
                     </p>
 
-                </div>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =========================
-             STANDINGS
-        ========================== -->
-
-        <section id="standings" class="section">
-
-            <div class="standings-header">
-
-                <div>
-
-                    <p class="section-label">
-                        LIVE LEADERBOARD
-                    </p>
-
-                    <h2>
-                        Tournament Standings
-                    </h2>
 
                     <p>
-                        Automatically updated after every match result.
+
+                        ❌ Loser:
+
+                        <strong>
+                            ${match.loser}
+                        </strong>
+
+                    </p>
+
+
+                    <p>
+                        🟢 Result Saved
                     </p>
 
                 </div>
 
+            `;
 
-                <button class="refresh-btn"
-                    onclick="loadStandings()">
-
-                    ↻ Refresh Table
-
-                </button>
-
-            </div>
+        }
 
 
+        // ===============================
+        // RESULT NOT SAVED
+        // ===============================
 
-            <div class="standings-card">
+        else {
 
-                <div class="table-responsive">
+            resultList.innerHTML += `
 
-                    <table>
+                <div class="result-card">
 
-                        <thead>
+                    <h3>
 
-                            <tr>
+                        ⚔ Match ${match.number}
 
-                                <th>Rank</th>
-
-                                <th>Team</th>
-
-                                <th>Played</th>
-
-                                <th>Won</th>
-
-                                <th>Lost</th>
-
-                                <th>Points</th>
-
-                            </tr>
-
-                        </thead>
+                    </h3>
 
 
-                        <tbody id="standingsTable">
+                    <p>
 
-                            <tr class="table-empty">
+                        <strong>
+                            ${match.team1}
+                        </strong>
 
-                                <td colspan="6">
-                                    No standings available yet.
-                                </td>
+                        vs
 
-                            </tr>
+                        <strong>
+                            ${match.team2}
+                        </strong>
 
-                        </tbody>
+                    </p>
 
-                    </table>
+
+                    <select id="winner-${match.number}">
+
+                        <option value="">
+                            Select Winner
+                        </option>
+
+
+                        <option value="${match.team1}">
+                            ${match.team1}
+                        </option>
+
+
+                        <option value="${match.team2}">
+                            ${match.team2}
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        onclick="saveResult(${match.number})">
+
+                        Save Result
+
+                    </button>
 
                 </div>
 
+            `;
+
+        }
+
+    });
+
+}
+
+
+// ===============================
+// SAVE RESULT
+// ===============================
+
+function saveResult(matchNumber) {
+
+    const winnerSelect =
+        document.getElementById(
+            "winner-" + matchNumber
+        );
+
+
+    if (!winnerSelect) {
+
+        alert("Winner selection not found.");
+
+        return;
+
+    }
+
+
+    const winner =
+        winnerSelect.value;
+
+
+    if (winner === "") {
+
+        alert("Please select a winner.");
+
+        return;
+
+    }
+
+
+    fetch("/update_result", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type": "application/json"
+
+        },
+
+        body: JSON.stringify({
+
+            number: matchNumber,
+
+            winner: winner
+
+        })
+
+    })
+
+
+    .then(response => response.json())
+
+
+    .then(data => {
+
+        alert(data.message);
+
+
+        // Reload matches
+        loadMatches();
+
+
+        // IMPORTANT:
+        // Reload standings after result
+
+        loadStandings();
+
+    })
+
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert("Error saving result.");
+
+    });
+
+}
+
+
+// ===============================
+// LOAD MATCHES
+// ===============================
+
+function loadMatches() {
+
+    fetch("/matches")
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        showFixtures(data, []);
+
+        showResults(data);
+
+
+        let completed = 0;
+
+
+        data.forEach(function(match) {
+
+            if (match.winner !== "") {
+
+                completed++;
+
+            }
+
+        });
+
+
+        resultCount.innerText =
+            completed;
+
+    })
+
+
+    .catch(error => {
+
+        console.error("Error loading matches:", error);
+
+    });
+
+}
+
+
+// ===============================
+// LOAD STANDINGS
+// ===============================
+
+function loadStandings() {
+
+    fetch("/standings")
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        showStandings(data);
+
+    })
+
+
+    .catch(error => {
+
+        console.error(
+            "Error loading standings:",
+            error
+        );
+
+
+        standingsTable.innerHTML = `
+
+            <tr class="table-empty">
+
+                <td colspan="6">
+
+                    Unable to load standings.
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+}
+
+
+// ===============================
+// SHOW STANDINGS
+// ===============================
+
+function showStandings(data) {
+
+    if (!data || data.length === 0) {
+
+        standingsTable.innerHTML = `
+
+            <tr class="table-empty">
+
+                <td colspan="6">
+
+                    No standings available yet.
+
+                </td>
+
+            </tr>
+
+        `;
+
+        return;
+
+    }
+
+
+    standingsTable.innerHTML = "";
+
+
+    data.forEach(function(item, index) {
+
+        const team = item[0];
+
+        const stats = item[1];
+
+
+        standingsTable.innerHTML += `
+
+            <tr>
+
+                <td>
+
+                    ${index + 1}
+
+                </td>
+
+
+                <td>
+
+                    🏆 ${team}
+
+                </td>
+
+
+                <td>
+
+                    ${stats.played}
+
+                </td>
+
+
+                <td>
+
+                    ${stats.won}
+
+                </td>
+
+
+                <td>
+
+                    ${stats.lost}
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+
+                        ${stats.points}
+
+                    </strong>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    });
+
+}
+
+
+// ===============================
+// RESET TOURNAMENT
+// ===============================
+
+function resetTournament() {
+
+    const answer = confirm(
+
+        "Are you sure you want to reset the tournament?"
+
+    );
+
+
+    if (!answer) {
+
+        return;
+
+    }
+
+
+    fetch("/reset", {
+
+        method: "POST"
+
+    })
+
+
+    .then(response => response.json())
+
+
+    .then(data => {
+
+        alert(data.message);
+
+
+        // ===============================
+        // CLEAR TEAM LIST
+        // ===============================
+
+        showTeams([]);
+
+
+        // ===============================
+        // CLEAR FIXTURES
+        // ===============================
+
+        fixtureList.innerHTML = `
+
+            <div class="empty-fixture">
+
+                <div>⚔</div>
+
+                <h3>
+                    No Fixtures Generated
+                </h3>
+
+                <p>
+                    Add teams and click Generate Fixture.
+                </p>
+
             </div>
 
-        </section>
+        `;
 
 
+        // ===============================
+        // CLEAR CALENDAR
+        // ===============================
 
-        <!-- FOOTER -->
+        calendarList.innerHTML = `
 
-        <footer>
+            <div class="empty-state">
 
-            <p>
-                © 2026 Tournament Fixture Generator
-            </p>
+                <div>🗓️</div>
 
-            <p>
-                Python Flask • Decision Support System • Sports
-            </p>
+                <p>
+                    Your match calendar will appear here.
+                </p>
 
-        </footer>
+            </div>
 
-
-    </main>
+        `;
 
 
+        // ===============================
+        // CLEAR RESULTS
+        // ===============================
 
-    <!-- JAVASCRIPT FILE -->
+        resultList.innerHTML = `
 
-    <script
-        src="{{ url_for('static', filename='script.js') }}">
-    </script>
+            <div class="empty-fixture">
 
-</body>
+                <div>🏅</div>
 
-</html>
+                <h3>
+                    No Matches Available
+                </h3>
+
+                <p>
+                    Generate fixtures first.
+                </p>
+
+            </div>
+
+        `;
+
+
+        // ===============================
+        // CLEAR STANDINGS
+        // ===============================
+
+        standingsTable.innerHTML = `
+
+            <tr class="table-empty">
+
+                <td colspan="6">
+
+                    No standings available yet.
+
+                </td>
+
+            </tr>
+
+        `;
+
+
+        // ===============================
+        // RESET COUNTERS
+        // ===============================
+
+        matchCount.innerText = 0;
+
+        dayCount.innerText = 0;
+
+        resultCount.innerText = 0;
+
+
+        // ===============================
+        // RESET BYE MESSAGE
+        // ===============================
+
+        byeMessage.innerText =
+
+            "Add teams and generate fixtures to receive smart recommendations.";
+
+
+        // ===============================
+        // CLEAR MESSAGE
+        // ===============================
+
+        message.innerText = "";
+
+
+        // ===============================
+        // CLEAR INPUT
+        // ===============================
+
+        teamName.value = "";
+
+    })
+
+
+    .catch(error => {
+
+        console.error(error);
+
+        alert("Error resetting tournament.");
+
+    });
+
+}
+
+
+// ===============================
+// LOAD DATA ON PAGE START
+// ===============================
+
+document.addEventListener(
+
+    "DOMContentLoaded",
+
+    function() {
+
+        loadTeams();
+
+        loadMatches();
+
+        loadStandings();
+
+    }
+
+);
