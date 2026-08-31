@@ -32,7 +32,6 @@ function addTeam() {
 
         message.innerText = "Please enter a team name.";
         return;
-
     }
 
     fetch("/add_team", {
@@ -70,7 +69,6 @@ function addTeam() {
         message.innerText = "Error adding team.";
 
     });
-
 }
 
 
@@ -107,14 +105,18 @@ function showTeams(teams) {
     if (teams.length === 0) {
 
         teamList.innerHTML = `
+
             <div class="empty-state">
+
                 <div>👥</div>
+
                 <p>No teams added yet</p>
+
             </div>
+
         `;
 
         return;
-
     }
 
 
@@ -154,6 +156,12 @@ function loadTeams() {
 
         showTeams(data);
 
+    })
+
+    .catch(error => {
+
+        console.error("Error loading teams:", error);
+
     });
 
 }
@@ -175,12 +183,12 @@ function generateFixture() {
 
     .then(data => {
 
-        // Show message
+        // Show BYE / recommendation message
         byeMessage.innerText =
             data.bye_message || data.message;
 
 
-        // If less than 2 teams
+        // If no fixtures
         if (!data.matches || data.matches.length === 0) {
 
             if (!data.bye_matches ||
@@ -189,7 +197,6 @@ function generateFixture() {
                 alert(data.message);
 
                 return;
-
             }
 
         }
@@ -277,22 +284,32 @@ function showFixtures(matches, byeMatches) {
     if (!matches || matches.length === 0) {
 
         fixtureList.innerHTML = `
+
             <div class="empty-fixture">
+
                 <div>⚔</div>
+
                 <h3>No Fixtures Generated</h3>
-                <p>Add teams and click Generate Fixture.</p>
+
+                <p>
+                    Add teams and click Generate Fixture.
+                </p>
+
             </div>
+
         `;
 
         return;
-
     }
 
 
     fixtureList.innerHTML = "";
 
 
+    // ===============================
     // NORMAL MATCHES
+    // ===============================
+
     matches.forEach(function(match) {
 
         let status = "🟠 Pending";
@@ -310,22 +327,40 @@ function showFixtures(matches, byeMatches) {
             <div class="fixture-card">
 
                 <h3>
+
                     ⚔ Match ${match.number}
+
                     — Round ${match.round}
+
                 </h3>
 
+
                 <p>
-                    <strong>${match.team1}</strong>
+
+                    <strong>
+                        ${match.team1}
+                    </strong>
+
                     vs
-                    <strong>${match.team2}</strong>
+
+                    <strong>
+                        ${match.team2}
+                    </strong>
+
                 </p>
 
+
                 <p>
+
                     📅 ${match.date}
+
                 </p>
 
+
                 <p>
+
                     ${status}
+
                 </p>
 
             </div>
@@ -335,7 +370,10 @@ function showFixtures(matches, byeMatches) {
     });
 
 
+    // ===============================
     // BYE CARDS
+    // ===============================
+
     byeMatches.forEach(function(bye) {
 
         fixtureList.innerHTML += `
@@ -343,20 +381,34 @@ function showFixtures(matches, byeMatches) {
             <div class="fixture-card">
 
                 <h3>
+
                     🏖️ BYE — Round ${bye.round}
+
                 </h3>
 
+
                 <p>
-                    <strong>${bye.team}</strong>
+
+                    <strong>
+                        ${bye.team}
+                    </strong>
+
                     gets a BYE
+
                 </p>
 
+
                 <p>
+
                     📅 ${bye.date}
+
                 </p>
 
+
                 <p>
+
                     No match for this team in this round.
+
                 </p>
 
             </div>
@@ -376,11 +428,13 @@ function showCalendar(matches, byeMatches) {
 
     calendarList.innerHTML = "";
 
-
     const allDates = {};
 
 
+    // ===============================
     // ADD NORMAL MATCHES
+    // ===============================
+
     matches.forEach(function(match) {
 
         if (!allDates[match.date]) {
@@ -393,8 +447,11 @@ function showCalendar(matches, byeMatches) {
         allDates[match.date].push({
 
             type: "match",
+
             number: match.number,
+
             team1: match.team1,
+
             team2: match.team2
 
         });
@@ -402,7 +459,10 @@ function showCalendar(matches, byeMatches) {
     });
 
 
+    // ===============================
     // ADD BYE
+    // ===============================
+
     byeMatches.forEach(function(bye) {
 
         if (!allDates[bye.date]) {
@@ -415,7 +475,9 @@ function showCalendar(matches, byeMatches) {
         allDates[bye.date].push({
 
             type: "bye",
+
             team: bye.team,
+
             round: bye.round
 
         });
@@ -423,7 +485,10 @@ function showCalendar(matches, byeMatches) {
     });
 
 
+    // ===============================
     // EMPTY CALENDAR
+    // ===============================
+
     if (Object.keys(allDates).length === 0) {
 
         calendarList.innerHTML = `
@@ -445,30 +510,46 @@ function showCalendar(matches, byeMatches) {
     }
 
 
+    // ===============================
     // SHOW DATE-WISE SCHEDULE
+    // ===============================
+
     Object.keys(allDates).forEach(function(date) {
 
         let html = `
 
             <div class="calendar-item">
 
-                <h3>📅 ${date}</h3>
+                <h3>
+                    📅 ${date}
+                </h3>
 
         `;
 
 
         allDates[date].forEach(function(item) {
 
+
             // NORMAL MATCH
+
             if (item.type === "match") {
 
                 html += `
 
                     <p>
+
                         ⚔ Match ${item.number}:
-                        <strong>${item.team1}</strong>
+
+                        <strong>
+                            ${item.team1}
+                        </strong>
+
                         vs
-                        <strong>${item.team2}</strong>
+
+                        <strong>
+                            ${item.team2}
+                        </strong>
+
                     </p>
 
                 `;
@@ -477,14 +558,23 @@ function showCalendar(matches, byeMatches) {
 
 
             // BYE
+
             if (item.type === "bye") {
 
                 html += `
 
                     <p>
-                        🏖️ <strong>${item.team}</strong>
+
+                        🏖️
+
+                        <strong>
+                            ${item.team}
+                        </strong>
+
                         gets a BYE
+
                         (Round ${item.round})
+
                     </p>
 
                 `;
@@ -520,7 +610,9 @@ function showResults(matches) {
 
                 <h3>No Matches Available</h3>
 
-                <p>Generate fixtures first.</p>
+                <p>
+                    Generate fixtures first.
+                </p>
 
             </div>
 
@@ -536,7 +628,11 @@ function showResults(matches) {
 
     matches.forEach(function(match) {
 
+
+        // ===============================
         // RESULT ALREADY SAVED
+        // ===============================
+
         if (match.winner !== "") {
 
             resultList.innerHTML += `
@@ -547,21 +643,39 @@ function showResults(matches) {
                         Match ${match.number}
                     </h3>
 
+
                     <p>
+
                         ${match.team1}
+
                         vs
+
                         ${match.team2}
+
                     </p>
 
+
                     <p>
+
                         🏆 Winner:
-                        <strong>${match.winner}</strong>
+
+                        <strong>
+                            ${match.winner}
+                        </strong>
+
                     </p>
 
+
                     <p>
+
                         ❌ Loser:
-                        <strong>${match.loser}</strong>
+
+                        <strong>
+                            ${match.loser}
+                        </strong>
+
                     </p>
+
 
                     <p>
                         🟢 Result Saved
@@ -574,7 +688,10 @@ function showResults(matches) {
         }
 
 
+        // ===============================
         // RESULT NOT SAVED
+        // ===============================
+
         else {
 
             resultList.innerHTML += `
@@ -582,14 +699,26 @@ function showResults(matches) {
                 <div class="result-card">
 
                     <h3>
+
                         ⚔ Match ${match.number}
+
                     </h3>
 
+
                     <p>
-                        <strong>${match.team1}</strong>
+
+                        <strong>
+                            ${match.team1}
+                        </strong>
+
                         vs
-                        <strong>${match.team2}</strong>
+
+                        <strong>
+                            ${match.team2}
+                        </strong>
+
                     </p>
+
 
                     <select id="winner-${match.number}">
 
@@ -597,15 +726,18 @@ function showResults(matches) {
                             Select Winner
                         </option>
 
+
                         <option value="${match.team1}">
                             ${match.team1}
                         </option>
+
 
                         <option value="${match.team2}">
                             ${match.team2}
                         </option>
 
                     </select>
+
 
                     <button
                         onclick="saveResult(${match.number})">
@@ -637,6 +769,15 @@ function saveResult(matchNumber) {
         );
 
 
+    if (!winnerSelect) {
+
+        alert("Winner selection not found.");
+
+        return;
+
+    }
+
+
     const winner =
         winnerSelect.value;
 
@@ -655,29 +796,41 @@ function saveResult(matchNumber) {
         method: "POST",
 
         headers: {
+
             "Content-Type": "application/json"
+
         },
 
         body: JSON.stringify({
 
             number: matchNumber,
+
             winner: winner
 
         })
 
     })
 
+
     .then(response => response.json())
+
 
     .then(data => {
 
         alert(data.message);
 
+
+        // Reload matches
         loadMatches();
+
+
+        // IMPORTANT:
+        // Reload standings after result
 
         loadStandings();
 
     })
+
 
     .catch(error => {
 
@@ -724,6 +877,13 @@ function loadMatches() {
         resultCount.innerText =
             completed;
 
+    })
+
+
+    .catch(error => {
+
+        console.error("Error loading matches:", error);
+
     });
 
 }
@@ -743,6 +903,31 @@ function loadStandings() {
 
         showStandings(data);
 
+    })
+
+
+    .catch(error => {
+
+        console.error(
+            "Error loading standings:",
+            error
+        );
+
+
+        standingsTable.innerHTML = `
+
+            <tr class="table-empty">
+
+                <td colspan="6">
+
+                    Unable to load standings.
+
+                </td>
+
+            </tr>
+
+        `;
+
     });
 
 }
@@ -761,7 +946,9 @@ function showStandings(data) {
             <tr class="table-empty">
 
                 <td colspan="6">
+
                     No standings available yet.
+
                 </td>
 
             </tr>
@@ -788,29 +975,48 @@ function showStandings(data) {
             <tr>
 
                 <td>
+
                     ${index + 1}
+
                 </td>
 
+
                 <td>
+
                     🏆 ${team}
+
                 </td>
 
+
                 <td>
+
                     ${stats.played}
+
                 </td>
 
+
                 <td>
+
                     ${stats.won}
+
                 </td>
 
+
                 <td>
+
                     ${stats.lost}
+
                 </td>
 
+
                 <td>
+
                     <strong>
+
                         ${stats.points}
+
                     </strong>
+
                 </td>
 
             </tr>
@@ -829,7 +1035,9 @@ function showStandings(data) {
 function resetTournament() {
 
     const answer = confirm(
+
         "Are you sure you want to reset the tournament?"
+
     );
 
 
@@ -846,25 +1054,35 @@ function resetTournament() {
 
     })
 
+
     .then(response => response.json())
+
 
     .then(data => {
 
         alert(data.message);
 
 
+        // ===============================
         // CLEAR TEAM LIST
+        // ===============================
+
         showTeams([]);
 
 
+        // ===============================
         // CLEAR FIXTURES
+        // ===============================
+
         fixtureList.innerHTML = `
 
             <div class="empty-fixture">
 
                 <div>⚔</div>
 
-                <h3>No Fixtures Generated</h3>
+                <h3>
+                    No Fixtures Generated
+                </h3>
 
                 <p>
                     Add teams and click Generate Fixture.
@@ -875,7 +1093,10 @@ function resetTournament() {
         `;
 
 
+        // ===============================
         // CLEAR CALENDAR
+        // ===============================
+
         calendarList.innerHTML = `
 
             <div class="empty-state">
@@ -891,14 +1112,19 @@ function resetTournament() {
         `;
 
 
+        // ===============================
         // CLEAR RESULTS
+        // ===============================
+
         resultList.innerHTML = `
 
             <div class="empty-fixture">
 
                 <div>🏅</div>
 
-                <h3>No Matches Available</h3>
+                <h3>
+                    No Matches Available
+                </h3>
 
                 <p>
                     Generate fixtures first.
@@ -909,13 +1135,18 @@ function resetTournament() {
         `;
 
 
+        // ===============================
         // CLEAR STANDINGS
+        // ===============================
+
         standingsTable.innerHTML = `
 
             <tr class="table-empty">
 
                 <td colspan="6">
+
                     No standings available yet.
+
                 </td>
 
             </tr>
@@ -923,25 +1154,41 @@ function resetTournament() {
         `;
 
 
+        // ===============================
         // RESET COUNTERS
+        // ===============================
+
         matchCount.innerText = 0;
+
         dayCount.innerText = 0;
+
         resultCount.innerText = 0;
 
 
+        // ===============================
         // RESET BYE MESSAGE
+        // ===============================
+
         byeMessage.innerText =
+
             "Add teams and generate fixtures to receive smart recommendations.";
 
 
+        // ===============================
         // CLEAR MESSAGE
+        // ===============================
+
         message.innerText = "";
 
 
+        // ===============================
         // CLEAR INPUT
+        // ===============================
+
         teamName.value = "";
 
     })
+
 
     .catch(error => {
 
@@ -959,12 +1206,17 @@ function resetTournament() {
 // ===============================
 
 document.addEventListener(
+
     "DOMContentLoaded",
+
     function() {
 
         loadTeams();
+
         loadMatches();
+
         loadStandings();
 
     }
+
 );
