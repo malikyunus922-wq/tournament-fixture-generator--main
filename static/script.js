@@ -1299,4 +1299,15 @@ function loadStandings() {
 
         });
 }
+function refreshStandings() {
 
+    loadStandings();
+
+    const msg = document.getElementById("refreshMessage");
+
+    msg.innerText = "✓ Standings table refreshed successfully!";
+
+    setTimeout(function() {
+        msg.innerText = "";
+    }, 2000);
+}
