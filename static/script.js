@@ -1220,3 +1220,83 @@ document.addEventListener(
     }
 
 );
+// ===============================
+// REFRESH STANDINGS TABLE
+// ===============================
+
+function loadStandings() {
+
+    fetch("/standings")
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(data) {
+
+            const table = document.getElementById("standingsTable");
+
+            if (!table) {
+                return;
+            }
+
+            if (!data || data.length === 0) {
+
+                table.innerHTML = `
+                    <tr class="table-empty">
+                        <td colspan="6">
+                            No standings available yet.
+                        </td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            table.innerHTML = "";
+
+            data.forEach(function(item, index) {
+
+                const team = item[0];
+                const stats = item[1];
+
+                table.innerHTML += `
+                    <tr>
+
+                        <td>
+                            ${index + 1}
+                        </td>
+
+                        <td>
+                            🏆 ${team}
+                        </td>
+
+                        <td>
+                            ${stats.played}
+                        </td>
+
+                        <td>
+                            ${stats.won}
+                        </td>
+
+                        <td>
+                            ${stats.lost}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${stats.points}
+                            </strong>
+                        </td>
+
+                    </tr>
+                `;
+
+            });
+
+        })
+        .catch(function(error) {
+
+            console.error("Refresh Table Error:", error);
+
+        });
+}
+
